@@ -10,5 +10,5 @@ The standard name of the upscaled photo is __fraise4.jpg__ . It can be renamed i
 
 Ongoing development :
  - *Translating/adding comments in English*
- - *Improving global readibility of the code*
+ - *Improving global readability of the code*
  - *Changing the structure from function with librairies to class*
