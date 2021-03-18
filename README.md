@@ -8,3 +8,4 @@ The UPSCALE.py is the main code, enregistrement.py and traitement_image_lib.py a
   
 The standard name of the upscaled photo is __fraise4.jpg__ . It can be renamed inside the python code of the file name UPSCALE.py.  
 *Working on improving comments and translating comments in english*
+*Workink on imporving readability of the code and performance by using class instead of function and librairies*
