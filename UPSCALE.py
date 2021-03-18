@@ -29,9 +29,7 @@ for i in range (0,nbiteration):
 #%% Ecriture des résultats dans un fichier
     
     record.write ("Temps image "+str(i+1)+" : "+str(list_time[i])+'\n',"result.txt")
-    print("\n\nTemps upscale : ",list_time[i])
-    if nbiteration !=1 and i == 0:
-        img.estimation(nbiteration-1,t1-t0)
+    #print("\n\nTemps upscale : ",list_time[i]) You can print this line but you might encouter some issue with loading bar (adding a useless loading bar if it is executed more than once)
     
 """#%% Amélioration de la netteté
     t2 = t.time()
