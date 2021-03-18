@@ -8,3 +8,4 @@ Ongoing development :
  - *Translating/adding comments in English*
  - *Improving global readability of the code*
  - *Changing the structure from function with librairies to class*
+ - *C++ variant of the programm to improve speed and efficiency*
