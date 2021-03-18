@@ -1,4 +1,4 @@
-# Upscale with Class
+# Upscale with class
 
 The UPSCALE_CLASS.py is the main code, it contains all the necesserary code to be executed. Be aware that compare to the FUNCTION varaint you will loose certain fonctionnality. Must of them are : automatic renaming scheme (which means that it will be always named test.jpg), storing the performance in a text document.
 
