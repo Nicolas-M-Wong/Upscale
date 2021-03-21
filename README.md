@@ -1,5 +1,5 @@
 # Upscale
-This program is upscaling any image by a factor 2. You may need to install the following libraries to run the program:
+This program is upscaling any image by a factor 2 using an algorithm of cubic interpolation. You may need to install the following libraries to run the program:
  - tqdm
  - itertools
  - opencv  
