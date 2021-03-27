@@ -1,36 +1,45 @@
+#%% Import libraries
+
 import cv2
 import traitement_image_lib as img
-import numpy as np
 import time as t
 import enregistrement as record
 
-record.clear("result.txt")
-record.clear("couleur.txt")
+#%% Init setup
 
-FraiseC=cv2.imread('fraise4.jpg')
-nbiteration = 1
-list_time = np.zeros(nbiteration)
-namedir = "PhotoUpscale"
+record.clear("result.txt")          #Create and empty the file result
+record.clear("couleur.txt")         #Same for the file couleur (which record the time taken by each sub-matrix R G B)
 
-record.cleardossier(namedir)
-record.dossier(namedir)
+picture_color = cv2.imread('fraise4.jpg')   #Import the matrix corresponding to the picture we want to upscale
 
-for i in range (0,nbiteration):
-    #%% Upscale Classique
-    titre = "Upscale"+str(i)+".jpg"
-    t0 = t.time() 
-    
-    #%% Calcul des temps d'upscale
-    cv2.imwrite(record.path(titre,namedir),img.upscale(FraiseC,"couleur.txt"))
-    t1 = t.time()
-    list_time[i] = (t1 - t0)
+namedir = "PhotoUpscale"            #Name of the directory that will contain the final picture
+
+# !!!! Be careful if another folder has the same name it will be deleted !!!!
+
+record.cleardossier(namedir)        #Clear the folder created to avoid conflict a folder has the same name
+record.dossier(namedir)             #Create the new folder 
 
 
-#%% Ecriture des résultats dans un fichier
-    
-    record.write ("Temps image "+str(i+1)+" : "+str(list_time[i])+'\n',"result.txt")
-    #print("\n\nTemps upscale : ",list_time[i]) You can print this line but you might encouter some issue with loading bar (adding a useless loading bar if it is executed more than once)
-    
+#%% Upscale Classique
+
+titre = "Upscale.jpg"               #Name of the new picture
+t0 = t.time()                       #Init the timer
+
+#%% Upscaling using the function in the library traitement_image_lib
+
+cv2.imwrite(record.path(titre,namedir),img.upscale(picture_color,"couleur.txt"))
+t1 = t.time()                       #End of the timer
+
+
+#%% Writing the perf metrics
+
+record.write ("Temps image "+" : "+str(t1-t0)+'\n',"result.txt")
+record.write("\n   Temps image moyen : "+str(t1-t0)+'\n',"result.txt")
+record.write("   Heure de fin : "+str(record.heure())+'\n',"result.txt")
+
+record.save("result.txt")  
+
+
 """#%% Amélioration de la netteté
     t2 = t.time()
     image = cv2.imread(record.path("Resultat"+str(i+1)+".jpg",namedir))#e.path(titre,nomdossier)
@@ -40,10 +49,3 @@ for i in range (0,nbiteration):
     print('temps netteté : ', t3-t2)
     record.write("Temps image netteté "+str(i+1)+" : "+str(t3-t2)+'\n',"result.txt")
 """
-
-#%%affichage
-
-
-record.write("\n   Temps image moyen : "+str(np.mean(list_time))+'\n',"result.txt")
-record.write("   Heure de fin : "+str(record.heure())+'\n',"result.txt")
-record.save("result.txt")  
