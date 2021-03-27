@@ -6,4 +6,4 @@ The standard name of the upscaled photo is __fraise4.jpg__ . It can be renamed i
 
 *On my laptop this program upscale 256x256 picture to a 512x512 in 30 sec approximately.*
 
-This version of the program is fully usable but lacks some of the features that you can found in the function/libraries version of the code. The main features that are lacking are the absence of wavelet/CSR compression, sharpness improvement and few archiving element that are not mandatory.
+This version of the program is fully usable but lacks some of the features that you can found in the function/libraries version of the code. The main features that are lacking are the absence of wavelet/CSR compression, sharpness improvement and few archiving elements that are not mandatory.
