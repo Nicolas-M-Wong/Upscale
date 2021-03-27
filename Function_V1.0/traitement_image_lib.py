@@ -1,3 +1,5 @@
+#%% Import libraries
+
 import cv2
 import numpy as np
 import time
@@ -5,10 +7,13 @@ import enregistrement as record
 from tqdm import tqdm
 from itertools import product
 
+#%% Function concerning only the upscale part
 
 def upscale(image,nomfichier):
-    z=ImC(image,nomfichier)
-    z=cv2.convertScaleAbs(z) 
+    
+    z = ImC(image,nomfichier)
+    z = cv2.convertScaleAbs(z) 
+    
     return z
 
 def ImC(image,nomfichier) : 
@@ -32,66 +37,80 @@ def Imc_monochrome_blue(image,nomfichier):
     
     b1 = time.time()
     b = image[:,:,0]
-    B=Grand(b,b.shape)
-    B=Interpol(B,0)
-    b2 =time.time()
+    B = black_edge(b,b.shape)
+    B = Interpol(B,0)
+    b2 = time.time()
     record.write ("Blue : "+str(b2-b1)+'\n',nomfichier)
+    
     return(B)
     
     
 def Imc_monochrome_green(image,nomfichier):
+    
     g1 = time.time()
     g = image[:,:,1]
-    Gr=Grand(g,g.shape)
-    Gr=Interpol(Gr,0)
+    Gr = black_edge(g,g.shape)
+    Gr = Interpol(Gr,0)
     g2 = time.time()
     record.write ("Green : "+str(g2-g1)+'\n',nomfichier)
+    
     return (Gr)    
 
 
 def Imc_monochrome_red (image,nomfichier) :
+    
     r1 = time.time()
     r = image[:,:,2]
-    R = Grand(r,r.shape)
+    R = black_edge(r,r.shape)
     R = Interpol(R,0)
     r2 = time.time()
     record.write ("Red : "+str(r2-r1)+'\n',nomfichier)
+    
     return (R)
     
-def Grand(E,g):
+def black_edge(E,g):
+    
     O = np.zeros((g[0]+2,g[1]+2))    
     for p in range (0,np.shape(E)[0]):
         for q in range (0,np.shape(E)[1]):
             O[p+1,q+1] = E[p,q]
+            
     return (O)
 
-def G(i,j,F): 
+def matrix_G(i,j,F):                #Theoritical matrix found using interpolation closed to the cubic interpolation
+    
     G = np.array([[F[i,j], F[i,j+1], (F[i,j+1]-F[i,j-1])/2, (F[i,j+2]-F[i,j])/2],
             [F[i+1,j], F[i+1,j+1], (F[i+1,j+1]-F[i+1,j-1])/2, (F[i+1,j+2]-F[i+1,j])/2],
             [(F[i+1,j]-F[i-1,j])/2, (F[i+1,j+1]-F[i-1,j+1])/2, (F[i+1,j+1]-F[i+1,j]-F[i,j+1]+2*F[i,j]-F[i-1,j]-F[i,j-1]+F[i-1,j-1])/2, (F[i+1,j+2]-F[i+1,j+1]-F[i,j+2]+2*F[i,j+1]-F[i-1,j+1]-F[i,j]+F[i-1,j])/2],
             [(F[i+2,j]-F[i,j])/2, (F[i+2,j+1]-F[i,j+1])/2, (F[i+2,j+1]-F[i+2,j]-F[i+1,j+1]+2*F[i+1,j]-F[i,j]-F[i+1,j-1]+F[i,j-1])/2, (F[i+2,j+2]-F[i+2,j+1]-F[i+1,j+2]+2*F[i+1,j+1]-F[i,j+1]-F[i+1,j]+F[i,j])/2]])
+    
     return G
 
 def Pf(x,y,C):
+    
     X = np.array([1, x, x**2, x**3])
     Y = np.array([1, y, y**2, y**3])
     Z = X@C@np.transpose(Y)
+    
     return (Z)
 
 def Interpol(H,progress):
-    A=np.array([[1, 0, 0, 0],
+    
+    A = np.array([[1, 0, 0, 0],
             [1, 1, 1, 1],
             [0, 1, 0, 0],
             [0, 1, 2, 3]])
 
-    B=np.transpose(A)
-    A=np.linalg.inv(A)
-    B=np.linalg.inv(B)
-    h=H.shape
-    N=np.zeros((2*h[0]-2,2*h[1]-2))
+    B = np.transpose(A)
+    A = np.linalg.inv(A)
+    B = np.linalg.inv(B)
+    h = H.shape
+    N = np.zeros((2*h[0]-2,2*h[1]-2))
     
     with tqdm(total = 100) as pbar:
+        
         for i in range (0,h[0]-2):
+            
             pbar.update(100/(h[0]-2))
             
             limite1 = range (0,h[1]-2)
@@ -99,45 +118,29 @@ def Interpol(H,progress):
             limite3 = range(0,2,1)
             
             for j,y,x in product (limite1,limite2,limite3):
-                if x==0 and y==0:
-                    N[2*i,2*j]=H[i,j]
-                if x==0 and y==2:
-                    N[2*i,2*j+1]=H[i,j+1]
-                if x==2 and y==0:
-                    N[2*i+1,2*j]=H[i+1,j]
-                if x==2 and y==2:
-                    N[2*i+1,2*j+1]=H[i+1,j+1]
+                
+                if x == 0 and y == 0:
+                    N[2*i,2*j] = H[i,j]
+                    
+                if x == 0 and y == 2:
+                    N[2*i,2*j+1] = H[i,j+1]
+                    
+                if x == 2 and y == 0:
+                    N[2*i+1,2*j] = H[i+1,j]
+                    
+                if x == 2 and y == 2:
+                    N[2*i+1,2*j+1] = H[i+1,j+1]
+                    
                 else:
-                    C=A@G(i,j,H)@B
-                    N[2*i+x,2*j+y]=Pf(x/2,y/2,C)
+                    C = A @ matrix_G(i,j,H)@B
+                    N[2*i+x,2*j+y] = Pf(x/2,y/2,C)
+    
     return N
 
-    
-def conversion (temps):
-    jour = 0
-    heures = 0
-    minutes = 0
-    sec = temps
-    
-    if temps > 60 :
-        minutes = temps/60
-        sec = (minutes-int(minutes))*60
-        heures = 0
-    if temps > 3600 :
-        heures = temps/3600
-        minutes =  (heures - int(heures))*60
-        sec = (minutes-int(minutes))*60
-    if temps > 86400:
-        jour = temps/24
-        heures = (jour-int(jour))*24
-        minutes =  (heures - int(heures))*60
-        sec = (minutes-int(minutes))*60
-        
-    return(int(jour),int(heures),int(minutes),sec)
+#%% Other function unused but could be usefull for working on matrix or image
 
-       
-def nettete (image):
-    Mconv = np.array([[0, 0, 0, 0, 0],[0, 0, -1, 0, 0],[0, -1, 5, -1, 0],[0, 0, -1, 0, 0],[0, 0, 0, 0, 0]])#netteté
+def nettete (image):            #Sharpness improvement (unused here but can be added at the end of the process of upscalling if needed)
+    Mconv = np.array([[0, 0, 0, 0, 0],[0, 0, -1, 0, 0],[0, -1, 5, -1, 0],[0, 0, -1, 0, 0],[0, 0, 0, 0, 0]])
     m,n,p = np.shape(image)
     mc, nc = np.shape(Mconv)
     
@@ -165,7 +168,9 @@ def nettete (image):
     S = cv2.convertScaleAbs(S)
     cv2.imwrite("Sharp.jpg", S)
 
-def checkdim(A):
+#%% Wavelet compression 
+    
+def checkdim(A):                #Adjusting the dimension so that we can apply the wavelet compression (dimension/8 in both axis)
     n,m = np.shape(A)
     rn = n%8
     rm = m%8
@@ -196,8 +201,9 @@ def checkdim(A):
     else :
         
         return A
-    
-def compression_wavelet (A):
+
+
+def compression_wavelet (A):    #Compression to get the sparse matrix
 
     W = np.array([[1/8, 1/8, 1/4, 0, 1/2, 0, 0, 0],
                   [1/8, 1/8, 1/4, 0, -1/2, 0, 0, 0],
@@ -223,16 +229,18 @@ def compression_wavelet (A):
                 for i,j in product(limiteC,limiteC):
                     
                     C[i,j] = A[k+i,j+l]
-                D = W@C@(np.transpose(W)) #On applique la transformation sur C pour obtenir la nouvelle matrice creuse B
+                D = W@C@(np.transpose(W))
                 
                 for y,z in product (limiteC,limiteC):
                     B[k+y,l+z] = D[y,z]
             
     return(B)
                     
-def decompression_wavelet (B):
+def decompression_wavelet (B):  #Get the new matrix from the sparse matrix
+    
     B = checkdim(B)
     n,m = np.shape (B)
+    
     W = np.array([[1/8, 1/8, 1/4, 0, 1/2, 0, 0, 0],
                   [1/8, 1/8, 1/4, 0, -1/2, 0, 0, 0],
                   [1/8, 1/8, -1/4, 0, 0, 1/2, 0, 0],
@@ -241,8 +249,10 @@ def decompression_wavelet (B):
                   [1/8, -1/8, 0, 1/4, 0, 0, -1/2, 0],
                   [1/8, -1/8, 0, -1/4, 0, 0, 0, 1/2],
                   [1/8, -1/8, 0, -1/4, 0, 0, 0, -1/2]])
+    
     A = np.zeros([n,m])
     C = np.zeros([8,8])
+    
     with tqdm(total=100) as pbar:
         for k in range (0,n,8):
             pbar.update(800/n)
@@ -250,9 +260,11 @@ def decompression_wavelet (B):
                 for i in range (0,8):
                     for j in range (0,8):
                         C[i,j] = B[k+i,j+l]
+                        
                 Winv = np.linalg.inv(W)
                 WTinv = np.linalg.inv(np.transpose(W))
                 D = Winv@C@WTinv
+                
                 for u in range (0,8):
                     for v in range (0,8):
                         A[k+u,l+v] = D[u,v]
@@ -260,64 +272,6 @@ def decompression_wavelet (B):
     A = cv2.convertScaleAbs(A)   
     return (A)
 
-def Matrice2CSR (A):
-    
-    n,m = np.shape(A)
-    AX = []
-    AJ = []
-    AI = [0]
-    k = 0
-    for i in range (m):
-        for j in range (n):
-            if A[i,j]!= 0:
-                k += 1
-                AX = np.concatenate( (AX,[A[i,j]]),axis = 0)
-                AJ = np.concatenate ( (AJ,[j]), axis = 0)
-        AI = np.concatenate((AI,[k]), axis=0) 
-        
-    return (AX,AJ,AI)
-
-
-def CSR2Matrice(AX,AJ,AI):
-   
-    n = np.size(AI) - 1
-    A = np.zeros((n,n))
-    s = 0
-    for i in range(n):
-        nbr_term = AI[i+1]
-        while s < nbr_term:
-            for j in range(s,nbr_term):
-                ind_col = int(AJ[j])
-                A[i,ind_col] = AX[s]
-                s+=1
-    return A
-
-def ProdCSR(AX,AJ,AI,x):
-   
-    P = np.zeros(np.shape(x))   
-    n = np.size(AI) - 1
-    c = 0 
-    for i in range(n):
-        nbr_term = AI[i+1] 
-        S = 0 
-        while c < nbr_term:
-            for j in range(c,nbr_term):
-                ind_col = int(AJ[j])
-               
-                S += AX[c]*x[ind_col]
-                c+=1
-        P[i] = S
-   
-    return P
-
-def SVD_compression(img,r):
-    U,S,VT = np.linalg.svd(img)
-    n,m = np.shape(img)
-
-    for i in range(0, r):
-        reconstimg = np.matrix(U[:, :i]) * np.diag(S[:i]) * np.matrix(VT[:i, :])
-    reconstimg = cv2.convertScaleAbs(reconstimg)
-    return (reconstimg)
 
 def compression_couleur (img):
     
@@ -358,3 +312,75 @@ def decompression_couleur (img):
     imagetotal = cv2.convertScaleAbs(imagetotal)
     
     return (imagetotal)
+
+def Matrice2CSR (A):            #From initial matrix to a CSR (compressed Row Storage) matrix
+    
+    n,m = np.shape(A)
+    AX = []
+    AJ = []
+    AI = [0]
+    k = 0
+    
+    for i in range (m):
+        for j in range (n):
+            
+            if A[i,j]!= 0:
+                
+                k += 1
+                AX = np.concatenate( (AX,[A[i,j]]),axis = 0)
+                AJ = np.concatenate ( (AJ,[j]), axis = 0)
+                
+        AI = np.concatenate((AI,[k]), axis=0) 
+        
+    return (AX,AJ,AI)
+
+
+def CSR2Matrice(AX,AJ,AI):  #From CSR matrix to the initial matrix
+   
+    n = np.size(AI) - 1
+    A = np.zeros((n,n))
+    s = 0
+    
+    for i in range(n):
+        nbr_term = AI[i+1]
+        
+        while s < nbr_term:
+            for j in range(s,nbr_term):
+                ind_col = int(AJ[j])
+                A[i,ind_col] = AX[s]
+                s+=1
+    return A
+
+
+def ProdCSR(AX,AJ,AI,x):    #Multiplication using CSR matrix (using sparse matrix to improve performance)
+   
+    P = np.zeros(np.shape(x))   
+    n = np.size(AI) - 1
+    c = 0
+    
+    for i in range(n):
+        nbr_term = AI[i+1] 
+        S = 0 
+        
+        while c < nbr_term:
+            for j in range(c,nbr_term):
+                ind_col = int(AJ[j])
+               
+                S += AX[c]*x[ind_col]
+                c+=1
+                
+        P[i] = S
+   
+    return P
+
+#%% Singular Value Decomposition compression of a matrix (unused here)
+def SVD_compression(img,r):
+    U,S,VT = np.linalg.svd(img)
+    n,m = np.shape(img)
+
+    for i in range(0, r):
+        reconstimg = np.matrix(U[:, :i]) * np.diag(S[:i]) * np.matrix(VT[:i, :])
+    reconstimg = cv2.convertScaleAbs(reconstimg)
+    return (reconstimg)
+
+
