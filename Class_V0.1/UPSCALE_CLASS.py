@@ -1,24 +1,41 @@
+#%% Import Libraries
+
 import cv2
 import numpy as np
 from tqdm import tqdm
 from itertools import product
-import time as t
+import time
+import os
+import shutil
+
+#%% Class calculus for the upscaling
 
 class upsc:
     
-   def __init__ (self):
+   def __init__ (self,name):
        
-       #import the picture using cv2 librairy
-       
-       self.picture_color = cv2.imread('fraise4.jpg')
-       self.picture_color = cv2.convertScaleAbs(self.picture_color) 
-       
-       #Creating the three matrices corresponding to each layer of the initial colored pictured 
-       
-       self.picture_B = self.picture_color[:,:,0]
-       self.picture_G = self.picture_color[:,:,1]
-       self.picture_R = self.picture_color[:,:,2]
-       
+           #Import the picture using cv2 librairy
+        
+        self.picture_color = cv2.imread(name)
+        self.picture_color = cv2.convertScaleAbs(self.picture_color) 
+            
+            #Creating the three matrices corresponding to each layer of the initial colored pictured 
+        
+        if (type(self.picture_color) != type(None)):    #check if the picture.color is a correct type (type(None) <=> wrong file name))
+
+            self.picture_B = self.picture_color[:,:,0]
+            self.picture_G = self.picture_color[:,:,1]
+            self.picture_R = self.picture_color[:,:,2]
+
+        else:                                           #Send the error message 
+
+            warning = '\x1b[0;4;33m'                    #Red underline for the error message
+            end  = '\x1b[0m'
+            print(warning+"\nUnable to upscale the name of the file is incorrect or unuseable by openCV\n"+end)
+            raise FileExistsError(name)                 #Raise the existing of the file error
+            
+            
+
    def black_edge (self,matrix_init,matrix_shape):
        
         #Adding a black line of two pixels around the initial matrix
@@ -90,8 +107,14 @@ class upsc:
                         self.N[2*i+x,2*j+y] = self.Z
 
 
-   def save_image (self,file_name):
+   def calc_image (self,file_name):
        
+        if (type(file_name) != str):                    #Need a str as file name at least (do not check if there is an extension)
+            warning = '\x1b[0;4;33m'                    #Red underline for the error message
+            end  = '\x1b[0m'
+            print(warning+"\nUnable to save the file the name of the file is incorrect!\n\nThe name of the file must be a str type\n"+end)
+            raise TypeError(file_name)  
+            
         #Recreating a matrix with three colored layer
        
         self.black_edge(self.picture_B, self.picture_B.shape)
@@ -122,6 +145,51 @@ class upsc:
     
         cv2.imwrite (file_name,C)
 
-    
-image = upsc()
-image.save_image("test.jpg")
+class save :
+    def __init__ (self):
+        self.directory = str(os.path.abspath(os.getcwd()))
+        
+        now = time.localtime(time.time())
+        year, month, day, hour, minute, second, weekday, yearday, daylight = now
+        self.hour = "%02dm%02dd%02dh%02dmin%02ds" % (month,day,hour, minute, second)
+        
+        self.file_name = "résultat ("+str(self.hour)+").txt"
+        
+    def create_folder (self,name):
+        os.mkdir(name)
+        
+    def write_file (self,string):
+        
+        fichier = open(self.file_name,"a")
+        fichier.write(string)
+        fichier.close()
+        
+    def clear_file (self):
+        file = open(self.file_name,"w")
+        file.close()
+        
+        
+    def clear_folder(self,folder) :
+        
+        path = os.path.sep.join([self.directory,folder])
+        
+        if os.path.exists(path):
+            shutil.rmtree(os.path.sep.join([self.directory,folder]))
+            time.sleep(0.5)
+        self.create_folder(folder)
+
+
+
+saving = save()
+
+saving.clear_folder("test")
+saving.clear_file()
+
+start = time.time()
+image = upsc("fraise4.jpg")
+image.calc_image("test.jpg")
+end = time.time()
+sentence = "Time taken by the algorithm : "+str(end-start)
+saving.write_file(sentence)
+
+
