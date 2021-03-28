@@ -6,6 +6,6 @@ The standard name of the upscaled photo is __fraise4.jpg__ . It can be renamed i
 
 *On my laptop this program upscale 256x256 picture to a 512x512 in 30 sec approximately.*
 
-This version of the program is fully usable but lacks some of the features that you can found in the function/libraries version of the code. The main features that are lacking are the absence of wavelet/CSR compression, sharpness improvement and few archiving elements that are not mandatory.
+This version of the program is fully usable but lacks some of the features that you can found in the function/libraries version of the code. The main features that are lacking are the absence of wavelet/CSR compression, sharpness improvement.
 
 The program might get stuck at 99% on one of the matrix calculus. I couldn't find the reason as it occures very rarely. If it happens to you just need to do a keyboard interrupt and restart the program. The next execution should be fine.
