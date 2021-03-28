@@ -206,8 +206,9 @@ saving.clear_file()
 
 start = time.time()
 
-image = upsc("fraise4.jpg")
-image.calc_image("upscaled_fraise4.jpg")
+name_picture = "fraise4.jpg"
+image = upsc(name_picture)
+image.calc_image("upscaled_"+name_picture)
 
 end = time.time()
 
