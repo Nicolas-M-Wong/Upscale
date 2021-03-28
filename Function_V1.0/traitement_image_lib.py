@@ -139,7 +139,7 @@ def Interpol(H,progress):
 
 #%% Other function unused but could be usefull for working on matrix or image
 
-def nettete (image):            #Sharpness improvement (unused here but can be added at the end of the process of upscalling if needed)
+def sharpness (image):            #Sharpness improvement (unused here but can be added at the end of the process of upscalling if needed)
     Mconv = np.array([[0, 0, 0, 0, 0],[0, 0, -1, 0, 0],[0, -1, 5, -1, 0],[0, 0, -1, 0, 0],[0, 0, 0, 0, 0]])
     m,n,p = np.shape(image)
     mc, nc = np.shape(Mconv)
