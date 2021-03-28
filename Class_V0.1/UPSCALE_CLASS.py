@@ -145,18 +145,17 @@ class upsc:
     
         cv2.imwrite (file_name,C)
 
-class save :
+#%%
+class save :                                        #Saving txt file class
+                                                    #Class not mandatory as it add nothing to the efficieny of the prog or the picture quality output.
+    
     def __init__ (self):
         self.directory = str(os.path.abspath(os.getcwd()))
         
         now = time.localtime(time.time())
         year, month, day, hour, minute, second, weekday, yearday, daylight = now
         self.hour = "%02dm%02dd%02dh%02dmin%02ds" % (month,day,hour, minute, second)
-        
         self.file_name = "résultat ("+str(self.hour)+").txt"
-        
-    def create_folder (self,name):
-        os.mkdir(name)
         
     def write_file (self,string):
         
@@ -165,6 +164,7 @@ class save :
         fichier.close()
         
     def clear_file (self):
+        
         file = open(self.file_name,"w")
         file.close()
         
@@ -177,19 +177,43 @@ class save :
             shutil.rmtree(os.path.sep.join([self.directory,folder]))
             time.sleep(0.5)
         self.create_folder(folder)
+        
+    def create_folder (self,name):
+        
+        os.mkdir(name)
 
-
-
+    def archiving_txt_file(self,name_archive_folder):
+        
+        path = os.path.sep.join([self.directory,name_archive_folder])
+        
+        if os.path.exists(path):
+            src = os.path.sep.join([self.directory,self.file_name])
+            dst = os.path.sep.join([path,self.file_name])
+            shutil.copy(src,dst)
+        
+        else:
+            self.create_folder(name_archive_folder)
+            src = os.path.sep.join([self.directory,self.file_name])
+            dst = os.path.sep.join([path,self.file_name])
+            shutil.copy(src,dst)
+        
+        os.remove(src)
+        
+#%% Main code
+        
 saving = save()
-
-saving.clear_folder("test")
 saving.clear_file()
 
 start = time.time()
+
 image = upsc("fraise4.jpg")
-image.calc_image("test.jpg")
+image.calc_image("upscaled_fraise4.jpg")
+
 end = time.time()
+
 sentence = "Time taken by the algorithm : "+str(end-start)
 saving.write_file(sentence)
+
+saving.archiving_txt_file("archive_folder")
 
 
