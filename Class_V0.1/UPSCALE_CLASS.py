@@ -199,66 +199,66 @@ class save :                                        #Saving txt file class
         
         os.remove(src)
         
-   """     
-class CSR:
+  
+# class CSR:
     
     
-    def Matrix2CSR (self,init_matrix):            #From initial matrix to a CSR (compressed Row Storage) matrix
+#     def Matrix2CSR (self,init_matrix):            #From initial matrix to a CSR (compressed Row Storage) matrix
     
-        n,m = np.shape(init_matrix)
-        self.AX = []
-        self.AJ = []
-        self.AI = [0]
-        k = 0
+#         n,m = np.shape(init_matrix)
+#         self.AX = []
+#         self.AJ = []
+#         self.AI = [0]
+#         k = 0
         
-        for i in range (m):
-            for j in range (n):
+#         for i in range (m):
+#             for j in range (n):
                 
-                if init_matrix[i,j]!= 0:
+#                 if init_matrix[i,j]!= 0:
                     
-                    k += 1
-                    self.AX = np.concatenate( (self.AX,[init_matrix[i,j]]),axis = 0)
-                    self.AJ = np.concatenate ( (self.AJ,[j]), axis = 0)
+#                     k += 1
+#                     self.AX = np.concatenate( (self.AX,[init_matrix[i,j]]),axis = 0)
+#                     self.AJ = np.concatenate ( (self.AJ,[j]), axis = 0)
                     
-            self.AI = np.concatenate((self.AI,[k]), axis=0) 
+#             self.AI = np.concatenate((self.AI,[k]), axis=0) 
 
 
-    def CSR2Matrix(self):  #From CSR matrix to the initial matrix
+#     def CSR2Matrix(self):  #From CSR matrix to the initial matrix
        
-        n = np.size(self.AI) - 1
-        self.reconstruct_matrix = np.zeros((n,n))
-        s = 0
+#         n = np.size(self.AI) - 1
+#         self.reconstruct_matrix = np.zeros((n,n))
+#         s = 0
         
-        for i in range(n):
-            nbr_term = self.AI[i+1]
+#         for i in range(n):
+#             nbr_term = self.AI[i+1]
             
-            while s < nbr_term:
-                for j in range(s,nbr_term):
-                    ind_col = int(self.AJ[j])
-                    self.reconstruct_matrix[i,ind_col] = self.AX[s]
-                    s+=1
+#             while s < nbr_term:
+#                 for j in range(s,nbr_term):
+#                     ind_col = int(self.AJ[j])
+#                     self.reconstruct_matrix[i,ind_col] = self.AX[s]
+#                     s+=1
         
     
     
-    def ProdCSR(self,x):    #Multiplication using CSR matrix (using sparse matrix to improve performance)
+#     def ProdCSR(self,x):    #Multiplication using CSR matrix (using sparse matrix to improve performance)
        
-        prod_matrix = np.zeros(np.shape(x))   
-        n = np.size(self.AI) - 1
-        c = 0
+#         prod_matrix = np.zeros(np.shape(x))   
+#         n = np.size(self.AI) - 1
+#         c = 0
         
-        for i in range(n):
-            nbr_term = self.AI[i+1] 
-            S = 0 
+#         for i in range(n):
+#             nbr_term = self.AI[i+1] 
+#             S = 0 
             
-            while c < nbr_term:
-                for j in range(c,nbr_term):
-                    ind_col = int(self.AJ[j])
+#             while c < nbr_term:
+#                 for j in range(c,nbr_term):
+#                     ind_col = int(self.AJ[j])
                    
-                    S += self.AX[c]*x[ind_col]
-                    c+=1
+#                     S += self.AX[c]*x[ind_col]
+#                     c+=1
                     
-            prod_matrix[i] = S
-        return(prod_matrix)"""
+#             prod_matrix[i] = S
+#         return(prod_matrix)
         
 #%% Main code
  
@@ -276,6 +276,6 @@ end = time.time()
 sentence = "Time taken by the algorithm : "+str(end-start)
 saving.write_file(sentence)
 
-saving.archiving_txt_file("archive_folder")"""
+saving.archiving_txt_file("archive_folder")
 
 
