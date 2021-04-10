@@ -1,4 +1,9 @@
 // C++ program to find adjoint and inverse of a matrix
+
+//Source of the code: 
+	//https://www.geeksforgeeks.org/program-to-find-transpose-of-a-matrix/
+	//https://www.geeksforgeeks.org/adjoint-inverse-matrix/
+
 #include<bits/stdc++.h>
 using namespace std;
 #define N 4
