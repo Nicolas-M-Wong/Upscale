@@ -3,6 +3,8 @@
 //Source of the code: 
 	//https://www.geeksforgeeks.org/program-to-find-transpose-of-a-matrix/
 	//https://www.geeksforgeeks.org/adjoint-inverse-matrix/
+//Few addition from the code above : matricial multiplication, transpose.
+//Searching to use vector<vector<int>> so that I can use any size of matrix. It is not yet working but hope to make it working soon
 
 #include<bits/stdc++.h>
 using namespace std;
@@ -103,7 +105,7 @@ bool inverse(int A[N][N], float inverse[N][N])
 	int det = determinant(A, N);
 	if (det == 0)
 	{
-		cout << "Singular matrix, can't find its inverse";
+		cout << "Singular matrix, can't find its inverse"<<endl;
 		return false;
 	}
 
@@ -122,50 +124,104 @@ bool inverse(int A[N][N], float inverse[N][N])
 
 void transpose(int A[][N], int B[][N])
 {
-    int i, j;
-    for (i = 0; i < N; i++)
-        for (j = 0; j < N; j++)
-            B[i][j] = A[j][i];
-}
- 
-// Generic function to display the matrix. We use it to display
-// both adjoin and inverse. adjoin is integer matrix and inverse
-// is a float.
-template<class T>
-void display(T A[N][N])
-{
-	for (int i=0; i<N; i++)
-	{
-		for (int j=0; j<N; j++)
-			cout << A[i][j] << " ";
-		cout << endl;
+	int i, j;
+	for (i = 0; i < N; i++)
+	for (j = 0; j < N; j++)
+	    B[i][j] = A[j][i];
+	return;
 	}
-}
 
+void dim_prod_mat(int dim_lineA,int dim_columnB,int dim_line_prod,int dim_column_prod)
+	{
+	dim_line_prod = dim_lineA;
+	dim_column_prod = dim_columnB;
+	return;
+	}
+
+void prod_mat (int dim_lineA,int dim_columnA,int dim_lineB,int dim_columnB, int A[N][N], int B[N][N], int prod[N][N])
+
+	{
+	for (int i = 0;i<dim_lineA; i++)
+		{
+		for (int j = 0; j<dim_columnB; j++)
+			{
+			float a_element = 0;
+			for (int k = 0; k<dim_lineB; k++)
+				{
+				a_element = a_element+A[i][k]*B[k][j];
+				}
+			prod[i][j] = a_element;
+			}
+		}
+	return;
+	}
+
+void error(bool state)
+	{
+	if (state == false)
+		{
+		throw "Mismatch dimension !";
+		}
+	return;
+	}
 
 int main()
-{
+	{
 	int A[N][N] = { {1, 0, 0, 0},
-			{1, 1, 1, 1},
-			{0, 1, 0, 0},
-			{0, 1, 2, 3}};
+		        {1, 1, 1, 1},
+	                {0, 1, 0, 0},
+		        {0, 1, 2, 3}};
 
 	int B[N][N] = { {1, 0, 0, 0},
-			{1, 1, 1, 1},
-			{0, 1, 0, 0},
-			{0, 1, 2, 3}};
+		        {1, 1, 1, 1},
+	                {0, 1, 0, 0},
+		        {0, 1, 2, 3}};
+
 	transpose(A, B);
-	display(B);
 	float inv[N][N]; // To store inverse of A[][]
 
-	cout << "Input matrix is :\n";
-	display(A);
+//---------------	Check if we can multiply the two matrix.
+	bool status = true;
+	int dim_lineB = sizeof(B)/sizeof(B[0]);
+	int dim_columnA = sizeof(A[0])/sizeof(int);
+	if (dim_columnA != dim_lineB)
+		{
+		status = false;
+		}
+	try 
+		{
+		error(status);
+		}
+	catch (const char* msg) 
+		{
+	     	cerr << msg << endl;
+		return -1;
+		}
+	int prod_[N][N];
+	prod_mat(N,N,N,N,A,B,prod_);
 	
+//---------------
+
+	for (int i=0; i<N; i++)
+		{
+		for (int j=0; j<N; j++)
+			{
+			cout << prod_[i][j] << " ";
+			}
+		cout<<endl;
+		}
+
 	cout << "\nThe Inverse is :\n";
 	if (inverse(A, inv))
 		{
-		display(inv);
+			for (int i=0; i<N; i++)
+				{
+				for (int j=0; j<N; j++)
+					{
+					cout << inv[i][j] << " ";
+					}
+				cout<<endl;
+			}
 		}
-
 	return 0;
 }
