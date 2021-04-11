@@ -11,3 +11,4 @@ Ongoing improvement :
  - *Changing the structure of the code from function with librairies to class*
  - *C++ variant of the programm to improve speed and efficiency*
  - *Different factor from 2 (may be downscalling the image ?)*
+ - *Multi threading (in python and C++ if I manage to program this project in C++)*
