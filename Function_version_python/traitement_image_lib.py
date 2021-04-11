@@ -11,13 +11,6 @@ from itertools import product
 
 def upscale(image,nomfichier):
     
-    z = ImC(image,nomfichier)
-    z = cv2.convertScaleAbs(z) 
-    
-    return z
-
-def ImC(image,nomfichier) : 
-    
     record.write ('\n',nomfichier)
 
     R = Imc_monochrome_red(image,nomfichier)
@@ -31,8 +24,11 @@ def ImC(image,nomfichier) :
     C[:,:,1]=G
     C[:,:,2]=R
     
-    return(C)
+    C = cv2.convertScaleAbs(C) 
+    
+    return C
 
+#-------------- Upscalling each sub-matrix independantly --------------
 def Imc_monochrome_blue(image,nomfichier):
     
     b1 = time.time()
@@ -68,14 +64,18 @@ def Imc_monochrome_red (image,nomfichier) :
     
     return (R)
     
-def black_edge(E,g):
+#-------------- Adding a two pixel thick layer around the image --------------
+# This layer means that the final picture will have twice the size + 2 pixel on each direction
+# It is has been added at begining because it couldn't work without but haven't work on it since so it might be a solution to avoid having this layer (I have a code that might not use it but hasn't take the time to check how it works)
+def black_edge(matrix_init,matrix_shape):
     
-    O = np.zeros((g[0]+2,g[1]+2))    
-    for p in range (0,np.shape(E)[0]):
-        for q in range (0,np.shape(E)[1]):
-            O[p+1,q+1] = E[p,q]
+    mag_matrix = np.zeros((matrix_shape[0]+2,matrix_shape[1]+2)) 
+    
+    for p in range (0,np.shape(matrix_init)[0]):
+        for q in range (0,np.shape(matrix_init)[1]):
+            mag_matrix[p+1,q+1] = matrix_init[p,q]
             
-    return (O)
+    return (mag_matrix)
 
 def matrix_G(i,j,F):                #Theoritical matrix found using interpolation closed to the cubic interpolation
     
@@ -84,7 +84,7 @@ def matrix_G(i,j,F):                #Theoritical matrix found using interpolatio
             [(F[i+1,j]-F[i-1,j])/2, (F[i+1,j+1]-F[i-1,j+1])/2, (F[i+1,j+1]-F[i+1,j]-F[i,j+1]+2*F[i,j]-F[i-1,j]-F[i,j-1]+F[i-1,j-1])/2, (F[i+1,j+2]-F[i+1,j+1]-F[i,j+2]+2*F[i,j+1]-F[i-1,j+1]-F[i,j]+F[i-1,j])/2],
             [(F[i+2,j]-F[i,j])/2, (F[i+2,j+1]-F[i,j+1])/2, (F[i+2,j+1]-F[i+2,j]-F[i+1,j+1]+2*F[i+1,j]-F[i,j]-F[i+1,j-1]+F[i,j-1])/2, (F[i+2,j+2]-F[i+2,j+1]-F[i+1,j+2]+2*F[i+1,j+1]-F[i,j+1]-F[i+1,j]+F[i,j])/2]])
     
-    return G
+    return G                        #The demonstration that explain how to find this result has been done but it is in French :(
 
 def Pf(x,y,C):
     
@@ -94,7 +94,8 @@ def Pf(x,y,C):
     
     return (Z)
 
-def Interpol(H,progress):
+def Interpol(H,progress):           #Applying the main algorithm here to upscale.
+                                    #The output is the matrix with size 2*size+2black_pixel thick layer
     
     A = np.array([[1, 0, 0, 0],
             [1, 1, 1, 1],
@@ -171,7 +172,7 @@ def sharpness (image):            #Sharpness improvement (unused here but can be
 #%% Wavelet compression 
     
 def checkdim(A):                #Adjusting the dimension so that we can apply the wavelet compression (dimension/8 in both axis)
-    n,m = np.shape(A)
+    n,m = np.shape(A)           #If the dimension are not divisible by 8 we add padding with a constant value of 0 (we can choose also a value <256 so that we can eleminate the padding without remembering the initial dimension but we need to avoid the convertscale at the end)
     rn = n%8
     rm = m%8
     if rn !=0 or rm != 0:
@@ -273,7 +274,7 @@ def decompression_wavelet (B):  #Get the new matrix from the sparse matrix
     return (A)
 
 
-def compression_couleur (img):
+def compression_couleur (img):              #Applying the wavelet on each sub_matrix for each color
     
     monochrome0 = img[:,:,0]
     monochrome0 = compression_wavelet(monochrome0)
@@ -313,7 +314,7 @@ def decompression_couleur (img):
     
     return (imagetotal)
 
-def Matrice2CSR (A):            #From initial matrix to a CSR (compressed Row Storage) matrix
+def Matrice2CSR (A):            #From initial matrix to a CSR (Compressed Row Storage) matrix
     
     n,m = np.shape(A)
     AX = []
