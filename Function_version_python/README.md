@@ -4,4 +4,4 @@ The UPSCALE_FUNCTION.py is the main code, enregistrement.py and traitement_image
   
 The standard name of the upscaled photo is __fraise4.jpg__ . It can be renamed inside the python code of the file name UPSCALE.py.  
 
-*On my laptop this program upscale 256x256 picture to a 512x512 in 30 sec approximately.*
+*On my laptop this program upscale 256x256 picture to a 512x512 in 30 sec approximately (with a Ryzen 7 4700U).*
