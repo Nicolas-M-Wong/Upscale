@@ -4,7 +4,6 @@
 	//https://www.geeksforgeeks.org/program-to-find-transpose-of-a-matrix/
 	//https://www.geeksforgeeks.org/adjoint-inverse-matrix/
 //Few addition from the code above : matricial multiplication, transpose.
-//Searching to use vector<vector<int>> so that I can use any size of matrix. It is not yet working but hope to make it working soon
 
 #include<bits/stdc++.h>
 using namespace std;
